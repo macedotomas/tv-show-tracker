@@ -1,0 +1,49 @@
+import express from 'express';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+//Routes
+import tvShowsRoutes from './src/routes/tvShowsRoutes.js';
+import jwtAuthRoutes from './src/routes/jwtAuth.js';
+
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+export default app;
+
+// Middleware
+app.use(express.json()); // to parse JSON request bodies
+app.use(cors()); // no cors problems
+app.use(helmet()); // to protect app by setting various HTTP headers
+app.use(morgan('dev')); // to log HTTP requests
+
+
+
+app.use('/api/tv-shows', tvShowsRoutes);
+
+app.use('/auth', jwtAuthRoutes);
+
+
+
+app.get('/api', (req, res) => {
+  res.status(200).json({ 
+    success: true,
+    data:[
+      { id: 1, name: 'Breaking Bad' },
+      { id: 2, name: 'Stranger Things' },
+      { id: 3, name: 'The Crown' }
+    ],
+  });
+});
+
+
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+

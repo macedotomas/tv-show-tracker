@@ -1,0 +1,20 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:watch": "cross-env NODE_ENV=test jest --watch",
+    "test:unit": "cross-env NODE_ENV=test jest tests/unit",
+    "test:integration": "cross-env NODE_ENV=test jest tests/integration"
+  },
+  "type": "module",
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "supertest": "^6.3.0",
+    "cross-env": "^7.0.0",
+    "node-mocks-http": "^1.11.0"
+  }
+}
+
