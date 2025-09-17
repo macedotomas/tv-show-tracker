@@ -4,7 +4,7 @@ import pool from '../config/db.js';
 
 
 
-export const getAllTVShows = async (req, res) => {
+export const getTVShows = async (req, res) => {
   try {
     const { rows } = await pool.query('SELECT * FROM tv_shows');
     res.status(200).json(rows);
@@ -29,3 +29,8 @@ export const createTVShow = async (req, res) => {
   }
 };
 
+export const getTVShow = async (req, res) => {};
+
+export const updateTVShow = async (req, res) => {};
+
+export const deleteTVShow = async (req, res) => {};
