@@ -1,7 +1,7 @@
 import pool from '../config/db.js';
 import bcrypt from 'bcrypt';
 import jwtGenerator from '../utils/jwtGenerator.js'; 
-
+import authorization from '../middleware/authorization.js';
 
 
 export const registerUser = async (req, res) => {
@@ -37,9 +37,9 @@ export const registerUser = async (req, res) => {
       const token = jwtGenerator(newUser.rows[0]);
 
       // Return the new user data and token
-      res.json({token});
+      //res.json({token});
       
-      //return res.status(201).json({ success: true, data: newUser.rows[0] });
+      return res.status(201).json({ success: true, data: newUser.rows[0] });
     }
 
   } catch (error) {
@@ -72,12 +72,29 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ success: false, message: 'Invalid email or password' });
     }
 
+    const token = jwtGenerator(user);
+
     // If login is successful, return user data (excluding password hash)
-    const { password_hash, ...userData } = user; // Exclude password_hash
-    return res.status(200).json({ success: true, data: userData });
+    //const { password: _omit, ...userData } = user;
+    const { password_hash, ...userData } = user;
+    return res.status(200).json({ success: true, data: userData, token });
+
 
   } catch (error) {
     console.error('Error logging in user:', error);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+
+
+// Verify Controller
+export const isVerify = async (req, res) => {
+  try {
+    return res.status(200).json({ success: true, message: 'Token is valid' });
+  
+  
+  } catch (error) {
+    console.error('Error verifying token:', error);
     res.status(500).json({ success: false, message: 'Server Error' });
   }
 };

@@ -267,10 +267,11 @@ BEGIN
 END$$;
 
 -- 4) Seed data (safe re-inserts) ---------------------------------------
-INSERT INTO users (username, email, password) VALUES
+INSERT INTO users (user_id, username, email, password) VALUES
 ('alice', 'alice@example.com', 'hash_alice'),
 ('bob', 'bob@example.com', 'hash_bob'),
-('charlie', 'charlie@example.com', 'hash_charlie')
+('charlie', 'charlie@example.com', 'hash_charlie'),
+('admin', 'admin@admin.com', '$2b$10$syAKuv9A88t.zRT5QRWVauIua3OH4mm2.nMqzg8KwwiF4JwdfkIUm')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO tokens (user_id, token, expires_at) VALUES

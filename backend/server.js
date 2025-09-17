@@ -6,7 +6,8 @@ import dotenv from 'dotenv';
 
 //Routes
 import tvShowsRoutes from './src/routes/tvShowsRoutes.js';
-import jwtAuthRoutes from './src/routes/jwtAuth.js';
+import jwtAuthRoutes from './src/routes/jwtAuthRoutes.js';
+import dashboardRoutes from './src/routes/dashboardRoutes.js';
 
 
 dotenv.config();
@@ -29,6 +30,8 @@ app.use('/api/tv-shows', tvShowsRoutes);
 app.use('/auth', jwtAuthRoutes);
 
 
+// Dashboard route
+app.use('/dashboard', dashboardRoutes);
 
 app.get('/api', (req, res) => {
   res.status(200).json({ 

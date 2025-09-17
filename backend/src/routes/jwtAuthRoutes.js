@@ -1,11 +1,9 @@
 import express from 'express';
-import { registerUser, loginUser } from '../controllers/authController.js';
-
-
+import { registerUser, loginUser, isVerify } from '../controllers/authController.js';
+import validInfo from '../middleware/validInfo.js';
+import authorization from '../middleware/authorization.js';
 
 const router = express.Router();
-
-
 
 /**
  * @route   POST /register
@@ -15,8 +13,7 @@ const router = express.Router();
  * This route receives user data (e.g., name, email, password)
  * and passes it to the registerUser controller to create a new account.
  */
-router.post('/register', registerUser);
-
+router.post('/register', validInfo, registerUser);
 
 /**
  * @route   POST /login
@@ -27,7 +24,17 @@ router.post('/register', registerUser);
  * and passes them to the loginUser controller to validate the user
  * and issue a JSON Web Token (JWT) or other session token.
  */
-router.post('/login', loginUser);
+router.post('/login', validInfo, loginUser);
+
+/** * @route   GET /is-verify
+ * @desc    Verify if the user is authenticated
+ * @access  Private
+ * 
+ * This route checks if the request includes a valid authentication token.
+ * If the token is valid, it confirms that the user is authenticated.
+ */
+router.get('/is-verify', authorization, isVerify); 
+
 
 
 
