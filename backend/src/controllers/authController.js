@@ -18,6 +18,7 @@ export const registerUser = async (req, res) => {
     if (userEmailCheck.rows.length > 0) {
       return res.status(401).json({ success: false, message: 'Email already in use' });
     }
+    
     // Check if user username already exists
     const userUsernameCheck = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
     if (userUsernameCheck.rows.length > 0) {
@@ -90,9 +91,7 @@ export const loginUser = async (req, res) => {
 // Verify Controller
 export const isVerify = async (req, res) => {
   try {
-    return res.status(200).json({ success: true, message: 'Token is valid' });
-  
-  
+    return res.json(true);
   } catch (error) {
     console.error('Error verifying token:', error);
     res.status(500).json({ success: false, message: 'Server Error' });

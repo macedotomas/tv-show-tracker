@@ -1,5 +1,7 @@
 import React, {Fragment, useState} from "react";
 import { Link } from "react-router-dom";
+import { toast } from 'react-toastify'
+
 
 const Register = ({setAuth}) => {
 
@@ -29,11 +31,13 @@ const Register = ({setAuth}) => {
       const parseRes = await response.json();
       
       // parseRes.data will contain the token if registration was successful
-      if (parseRes.data) {
+      if (parseRes?.data) {
         localStorage.setItem("token", parseRes.data);
         setAuth(true);
+        toast.success("Registered Successfully!");
       } else {
         setAuth(false);
+        toast.error(parseRes?.message || "Registration Failed. Please try again.");
       }
     } catch (err) {
       console.error(err.message);

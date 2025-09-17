@@ -1,6 +1,8 @@
 import React, {Fragment, useState} from "react";
 import { Link } from "react-router-dom";
 
+import { ToastContainer, toast } from 'react-toastify'
+
 const Login = ({setAuth}) => {
   const [inputs, setInputs] = useState({
     email: "",
@@ -26,14 +28,14 @@ const Login = ({setAuth}) => {
 
       const parseRes = await response.json();
 
-      console.log(parseRes.data);
-
       // parseRes.data will contain the token if login was successful
-      if (parseRes.data) {
+      if (parseRes?.data) {
         localStorage.setItem("token", parseRes.data);
         setAuth(true);
+        toast.success("Logged in Successfully!");
       } else {
         setAuth(false);
+        toast.error(parseRes?.message || "Login Failed. Please try again.");
       }
     } catch (err) {
       console.error(err.message);
