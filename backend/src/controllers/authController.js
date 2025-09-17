@@ -39,7 +39,7 @@ export const registerUser = async (req, res) => {
       // Return the new user data and token
       //res.json({token});
       
-      return res.status(201).json({ success: true, data: newUser.rows[0] });
+      return res.status(201).json({ success: true, data: token });
     }
 
   } catch (error) {
@@ -77,7 +77,7 @@ export const loginUser = async (req, res) => {
     // If login is successful, return user data (excluding password hash)
     //const { password: _omit, ...userData } = user;
     const { password_hash, ...userData } = user;
-    return res.status(200).json({ success: true, data: userData, token });
+    return res.status(200).json({ success: true, data: token });
 
 
   } catch (error) {
