@@ -9,6 +9,7 @@ import Register from './components/Register.jsx'
 import Login from './components/Login.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import AppRoutes from './components/AppRoutes.jsx'
+import NavBar from './components/NavBar.jsx'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -46,14 +47,16 @@ function App() {
 
 
   return (
-    <Router>
-      <div className="container">
-        
-        <AppRoutes isAuthenticated={isAuthenticated} setAuth={setAuth} />
+      <div className="container ">
+        <div className="min-h-screen bg-base-200 transition-colors duration-300" data-theme="forest">
 
-        <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+          <NavBar isAuthenticated={isAuthenticated} setAuth={setAuth} />
+
+          <AppRoutes isAuthenticated={isAuthenticated} setAuth={setAuth} />
+
+          <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+        </div>
       </div>
-    </Router>
   )
 }
 
