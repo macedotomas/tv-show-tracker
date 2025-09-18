@@ -4,9 +4,9 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 // Components
-import Register from './Register.jsx'
-import Login from './Login.jsx'
-import Dashboard from './Dashboard.jsx'
+import Register from '../pages/RegisterPage.jsx'
+import Login from '../pages/LoginPage.jsx'
+import Dashboard from '../pages/DashboardPage.jsx'
 
 function AppRoutes({ isAuthenticated, setAuth }) {
   return (

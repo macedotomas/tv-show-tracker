@@ -5,9 +5,9 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 // Components
-import Register from './components/Register.jsx'
-import Login from './components/Login.jsx'
-import Dashboard from './components/Dashboard.jsx'
+import Register from './pages/RegisterPage.jsx'
+import Login from './pages/LoginPage.jsx'
+import Dashboard from './pages/DashboardPage.jsx'
 import AppRoutes from './components/AppRoutes.jsx'
 import NavBar from './components/NavBar.jsx'
 
