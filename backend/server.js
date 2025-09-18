@@ -33,16 +33,6 @@ app.use('/auth', jwtAuthRoutes);
 // Dashboard route
 app.use('/dashboard', dashboardRoutes);
 
-app.get('/api', (req, res) => {
-  res.status(200).json({ 
-    success: true,
-    data:[
-      { id: 1, name: 'Breaking Bad' },
-      { id: 2, name: 'Stranger Things' },
-      { id: 3, name: 'The Crown' }
-    ],
-  });
-});
 
 
 
