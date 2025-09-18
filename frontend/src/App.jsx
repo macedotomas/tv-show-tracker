@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect} from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 
 import { ToastContainer } from 'react-toastify'
@@ -13,10 +13,10 @@ import NavBar from './components/NavBar.jsx'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true); // NEW
 
-  const setAuth = (boolean) => {
-    setIsAuthenticated(boolean);
-  }
+
+  const setAuth = (boolean) => { setIsAuthenticated(boolean); }
 
 
   async function isAuth() {
@@ -35,6 +35,9 @@ function App() {
 
     } catch (err) {
       console.error(err.message);
+      setIsAuthenticated(false);
+    } finally {
+      setAuthChecking(false);
     }
   }
 
@@ -45,18 +48,34 @@ function App() {
   }, []);
 
 
+  // To make sure refresh on edit product does not send back to /dashboard 
+  if (authChecking) {
+    return (
+      <div
+        className="min-h-screen grid place-items-center bg-base-200 text-base-content"
+        style={{
+          backgroundColor: '#1d232a', // fallback color matching bg-base-200 for DaisyUI forest
+        }}
+        data-theme="forest" // apply DaisyUI theme early
+      >
+        <div className="loading loading-spinner loading-lg" />
+      </div>
+    );
+  }
+
+
 
   return (
-      <div className="container ">
-        <div className="min-h-screen bg-base-200 transition-colors duration-300" data-theme="forest">
+    <div className="container ">
+      <div className="min-h-screen bg-base-200 transition-colors duration-300" data-theme="forest">
 
-          <NavBar isAuthenticated={isAuthenticated} setAuth={setAuth} />
+        <NavBar isAuthenticated={isAuthenticated} setAuth={setAuth} />
 
-          <AppRoutes isAuthenticated={isAuthenticated} setAuth={setAuth} />
+        <AppRoutes isAuthenticated={isAuthenticated} setAuth={setAuth} />
 
-          <ToastContainer position="top-right" autoClose={3000} theme="colored" />
-        </div>
+        <ToastContainer position="top-right" autoClose={3000} theme="colored" />
       </div>
+    </div>
   )
 }
 

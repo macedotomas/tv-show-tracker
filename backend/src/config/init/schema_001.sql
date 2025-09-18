@@ -23,8 +23,27 @@ CREATE EXTENSION IF NOT EXISTS citext;
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- Controlled vocabulary for tv_shows.type
-CREATE TYPE show_type AS ENUM
-  ('Drama','Sitcom','Animation','Miniseries','Documentary','Sci-Fi','Fantasy','Comedy', 'Anime');
+-- Se ainda não criou o tipo, crie já com todos os valores necessários:
+CREATE TYPE show_type AS ENUM (
+  'Drama',
+  'Sitcom',
+  'Animation',
+  'Miniseries',
+  'Documentary',
+  'Sci-Fi',
+  'Fantasy',
+  'Comedy',
+  'Anime',
+  'Thriller',
+  'Action',
+  'Adventure',
+  'Romance',
+  'Mystery',
+  'Horror',
+  'Anthology',
+  'History'
+);
+
 
 -- 2) Core Tables --------------------------------------------------------
 CREATE TABLE users (
@@ -151,10 +170,39 @@ INSERT INTO tokens (user_id, token, expires_at) VALUES
 
 -- TV shows (deterministic order → ids 1..4)
 INSERT INTO tv_shows (title, description, genre, type, release_date, rating) VALUES
-('Breaking Bad', 'A chemistry teacher turns to making meth to secure his familys future.', 'Crime',  'Drama', '2008-01-20', 9.5),
-('Stranger Things', 'Kids in a small town uncover supernatural mysteries.',                'Sci-Fi', 'Drama', '2016-07-15', 8.7),
-('The Office', 'Mockumentary sitcom about the everyday work life of office employees.',   'Comedy', 'Sitcom','2005-03-24', 8.9),
-('The Witcher', 'A monster hunter struggles to find his place in a world of magic and politics.', 'Fantasy', 'Drama', '2019-12-20', 8.2);
+-- Séries dramáticas e thriller
+('Game of Thrones', 'Nobles battle for control of the Iron Throne in a world of dragons and intrigue.', 'Fantasy', 'Drama', '2011-04-17', 9.3),
+('The Crown', 'Chronicles the reign of Queen Elizabeth II and the political rivalries of her era.', 'Drama', 'Drama', '2016-11-04', 8.6),
+('The Sopranos', 'A mob boss balances family life with running a criminal organization.', 'Crime', 'Drama', '1999-01-10', 9.2),
+('Dark', 'A German town’s secrets unravel through time travel and mysterious disappearances.', 'Mystery', 'Thriller', '2017-12-01', 8.8),
+('Mindhunter', 'FBI agents develop criminal profiling while interviewing serial killers.', 'Crime', 'Thriller', '2017-10-13', 8.6),
+
+-- Ficção científica e fantasia
+('Westworld', 'A futuristic theme park with AI hosts spirals into chaos.', 'Sci-Fi', 'Drama', '2016-10-02', 8.5),
+('The Mandalorian', 'A lone bounty hunter navigates the Star Wars galaxy after the fall of the Empire.', 'Sci-Fi', 'Adventure', '2019-11-12', 8.7),
+('Black Mirror', 'Standalone episodes exploring the dark side of technology and society.', 'Sci-Fi', 'Anthology', '2011-12-04', 8.8),
+('Arcane', 'In a world of magic and technology, two sisters find themselves on opposing sides.', 'Fantasy', 'Animation', '2021-11-06', 9.0),
+('Cowboy Bebop', 'Space bounty hunters chase criminals while dealing with their pasts.', 'Sci-Fi', 'Anime', '1998-04-03', 8.9),
+
+-- Comédia e sitcoms
+('Friends', 'Six friends navigate life, love, and work in New York City.', 'Comedy', 'Sitcom', '1994-09-22', 8.9),
+('Parks and Recreation', 'A small-town public official works to make her community better.', 'Comedy', 'Sitcom', '2009-04-09', 8.6),
+('Brooklyn Nine-Nine', 'Detectives in a New York precinct solve crimes with humor and heart.', 'Comedy', 'Sitcom', '2013-09-17', 8.4),
+('BoJack Horseman', 'A washed-up TV star, who happens to be a horse, struggles with fame and addiction.', 'Comedy', 'Animation', '2014-08-22', 8.8),
+
+-- Terror e suspense
+('The Haunting of Hill House', 'A fractured family confronts haunting memories of their old home.', 'Horror', 'Miniseries', '2018-10-12', 8.6),
+('Penny Dreadful', 'Famous gothic characters fight evil forces in Victorian London.', 'Horror', 'Drama', '2014-05-11', 8.2),
+
+-- Ação e aventura
+('The Boys', 'A vigilante group battles corrupt superheroes in a darkly comic world.', 'Action', 'Drama', '2019-07-26', 8.7),
+('Vikings', 'Legendary Norse heroes seek glory and adventure across Europe.', 'History', 'Drama', '2013-03-03', 8.5),
+('Avatar: The Last Airbender', 'A young Avatar must master all four elements to bring peace to the world.', 'Fantasy', 'Animation', '2005-02-21', 9.2),
+
+-- Romance e mistério
+('Bridgerton', 'High society scandals and romance unfold in Regency-era London.', 'Romance', 'Drama', '2020-12-25', 7.4),
+('Big Little Lies', 'A murder in a wealthy coastal town exposes deep secrets and lies.', 'Mystery', 'Drama', '2017-02-19', 8.5);
+
 
 -- Episodes (by numeric show_id since this is a clean DB)
 INSERT INTO episodes (show_id, title, episode_number, season_number, release_date) VALUES
