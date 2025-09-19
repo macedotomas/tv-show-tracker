@@ -1,4 +1,15 @@
 import pool from '../config/db.js';
+import {
+  getTvShowsListCacheKey,
+  cacheTvShowsList,
+  getCachedTvShowsList,
+  cacheTvShowsCount,
+  getCachedTvShowsCount,
+  cacheTvShowDetail,
+  getCachedTvShowDetail,
+  invalidateTvShowsCache,
+  invalidateTvShowDetailCache
+} from '../utils/cacheHelpers.js';
 
 
 
@@ -21,10 +32,27 @@ export const getTVShows = async (req, res) => {
       });
     }
 
-    // Get total count for pagination metadata
-    const countQuery = 'SELECT COUNT(*) FROM tv_shows';
-    const countResult = await pool.query(countQuery);
-    const totalItems = parseInt(countResult.rows[0].count);
+    // Generate cache key for this specific request
+    const cacheKey = getTvShowsListCacheKey(page, limit, 'title', 'asc');
+    
+    // Try to get from cache first
+    const cachedData = getCachedTvShowsList(cacheKey);
+    if (cachedData) {
+      console.log(`Serving TV shows from cache (page ${page}/${cachedData.pagination.totalPages})`);
+      return res.status(200).json(cachedData);
+    }
+
+    // Get total count (try cache first)
+    let totalItems = getCachedTvShowsCount();
+    if (totalItems === null) {
+      const countQuery = 'SELECT COUNT(*) FROM tv_shows';
+      const countResult = await pool.query(countQuery);
+      totalItems = parseInt(countResult.rows[0].count);
+      
+      // Cache the count
+      cacheTvShowsCount(totalItems);
+    }
+
     const totalPages = Math.ceil(totalItems / limit);
 
     const query = `
@@ -50,9 +78,9 @@ export const getTVShows = async (req, res) => {
     `;
     
     const { rows } = await pool.query(query, [limit, offset]);
-    console.log(`Fetched ${rows.length} TV shows with actors (page ${page}/${totalPages}):`, rows);
+    console.log(`Fetched ${rows.length} TV shows from database (page ${page}/${totalPages})`);
     
-    res.status(200).json({
+    const responseData = {
       success: true, 
       data: rows,
       pagination: {
@@ -63,7 +91,12 @@ export const getTVShows = async (req, res) => {
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1
       }
-    });
+    };
+
+    // Cache the response
+    cacheTvShowsList(cacheKey, responseData);
+
+    res.status(200).json(responseData);
   } catch (err) {
     console.error('Error fetching TV shows:', err);
     res.status(500).json({ success: false, message: 'Failed to fetch TV shows' });
@@ -82,6 +115,10 @@ export const createTVShow = async (req, res) => {
       'INSERT INTO tv_shows (title, description, genre, type, release_date, rating) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
       [title, description || null, genre, type, release_date, rating || null]
     );
+
+    // Invalidate cache since we added a new TV show
+    invalidateTvShowsCache();
+
     res.status(201).json({ success: true, data: rows[0] });
   } catch (err) {
     console.error('Error creating TV show:', err);
@@ -91,7 +128,15 @@ export const createTVShow = async (req, res) => {
 
 export const getTVShow = async (req, res) => {
   const { id } = req.params;
+  
   try {
+    // Try to get from cache first
+    const cachedShow = getCachedTvShowDetail(id);
+    if (cachedShow) {
+      console.log(`Serving TV show ${id} from cache`);
+      return res.status(200).json({ success: true, data: cachedShow });
+    }
+
     const query = `
       SELECT 
         ts.*,
@@ -117,7 +162,14 @@ export const getTVShow = async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ success: false, message: 'TV show not found' });
     }
-    res.status(200).json({ success: true, data: rows[0] });
+
+    const tvShowData = rows[0];
+    console.log(`Fetched TV show ${id} from database`);
+
+    // Cache the TV show data
+    cacheTvShowDetail(id, tvShowData);
+
+    res.status(200).json({ success: true, data: tvShowData });
   } catch (err) {
     console.error('Error fetching TV show:', err);
     res.status(500).json({ success: false, message: 'Failed to fetch TV show' });
@@ -189,6 +241,10 @@ export const updateTVShow = async (req, res) => {
       return res.status(404).json({ success: false, message: 'TV show not found' });
     }
 
+    // Invalidate caches since we updated the TV show
+    invalidateTvShowDetailCache(id);
+    invalidateTvShowsCache();
+
     return res.status(200).json({ success: true, data: rows[0] });
   } catch (err) {
     // Common helpful error surfaces:
@@ -208,6 +264,11 @@ export const deleteTVShow = async (req, res) => {
     if (rowCount === 0) {
       return res.status(404).json({ success: false, message: 'TV show not found' });
     }
+
+    // Invalidate caches since we deleted the TV show
+    invalidateTvShowDetailCache(id);
+    invalidateTvShowsCache();
+
     res.status(200).json({ success: true, message: 'TV show deleted successfully' });
   } catch (err) {
     console.error('Error deleting TV show:', err);

@@ -11,6 +11,7 @@ import favoritesRoutes from './src/routes/favoritesRoutes.js';
 import episodesRoutes from './src/routes/episodesRoutes.js';
 import jwtAuthRoutes from './src/routes/jwtAuthRoutes.js';
 import dashboardRoutes from './src/routes/dashboardRoutes.js';
+import cacheRoutes from './src/routes/cacheRoutes.js';
 
 
 dotenv.config();
@@ -35,6 +36,8 @@ app.use('/api/actors', actorsRoutes);
 app.use('/api/favorites', favoritesRoutes);
 
 app.use('/api/episodes', episodesRoutes);
+
+app.use('/api/cache', cacheRoutes);
 
 app.use('/auth', jwtAuthRoutes);
 
