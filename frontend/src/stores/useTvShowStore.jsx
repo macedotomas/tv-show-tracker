@@ -13,6 +13,16 @@ export const useTvShowStore = create((set, get) => ({
   error: null,
   currentTvShow: null,
 
+  // pagination state
+  pagination: {
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 12,
+    hasNextPage: false,
+    hasPreviousPage: false
+  },
+
   // filter state
   filters: {
     genre: "",
@@ -41,6 +51,42 @@ export const useTvShowStore = create((set, get) => ({
 
   setSort: (sort) => set({ sort }),
 
+  // pagination functions
+  setPage: (page) => {
+    set(state => ({
+      pagination: {
+        ...state.pagination,
+        currentPage: page
+      }
+    }));
+    get().fetchTvShows(); // Fetch new page data
+  },
+
+  nextPage: () => {
+    const { pagination } = get();
+    if (pagination.hasNextPage) {
+      get().setPage(pagination.currentPage + 1);
+    }
+  },
+
+  previousPage: () => {
+    const { pagination } = get();
+    if (pagination.hasPreviousPage) {
+      get().setPage(pagination.currentPage - 1);
+    }
+  },
+
+  setItemsPerPage: (itemsPerPage) => {
+    set(state => ({
+      pagination: {
+        ...state.pagination,
+        itemsPerPage,
+        currentPage: 1 // Reset to first page when changing items per page
+      }
+    }));
+    get().fetchTvShows(); // Fetch new data with new page size
+  },
+
   setSortField: (field) => {
     const currentSort = get().sort;
     // If clicking the same field, toggle direction
@@ -62,20 +108,13 @@ export const useTvShowStore = create((set, get) => ({
     }
   }),
 
-  // computed filtered TV shows
+  // For now, return tvShows as-is since filtering will be server-side in the future
+  // TODO: Implement server-side filtering with pagination
   getFilteredTvShows: () => {
-    const { tvShows, filters, sort } = get();
+    const { tvShows, sort } = get();
     
-    // First filter
-    let filtered = tvShows.filter(tvShow => {
-      const genreMatch = !filters.genre || tvShow.genre.toLowerCase().includes(filters.genre.toLowerCase());
-      const typeMatch = !filters.type || tvShow.type.toLowerCase().includes(filters.type.toLowerCase());
-      
-      return genreMatch && typeMatch;
-    });
-
-    // Then sort
-    return filtered.sort((a, b) => {
+    // Only apply sorting for now (filtering will be server-side)
+    return [...tvShows].sort((a, b) => {
       let aValue = a[sort.field];
       let bValue = b[sort.field];
 
@@ -149,21 +188,20 @@ export const useTvShowStore = create((set, get) => ({
     e.preventDefault();
     set({ loading: true });
 
-
     try {
       const token = localStorage.getItem("token") || '';
       const response = await axios.post(`${BASE_URL}/api/tv-shows`, get().formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      // first data from response is from axios, second data is from backend response 
-      set({ tvShows: [...get().tvShows, response.data.data], error: null });
       get().resetFormData();
       toast.success("TV show added successfully.");
 
-
       // Close the modal after successful addition
       document.getElementById('add_tvshow_modal').close();
+
+      // Refresh the current page to show the new item
+      get().fetchTvShows();
 
     } catch (error) {
       set({ error: error.message });
@@ -171,26 +209,32 @@ export const useTvShowStore = create((set, get) => ({
     } finally {
       set({ loading: false });
     }
-
   },
 
 
   fetchTvShows: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get(`${BASE_URL}/api/tv-shows`);
+      const { pagination } = get();
+      const params = new URLSearchParams({
+        page: pagination.currentPage.toString(),
+        limit: pagination.itemsPerPage.toString()
+      });
 
-      // first data from response is from axios, second data is from backend response 
-      set({ tvShows: response.data.data, error: null });
+      const response = await axios.get(`${BASE_URL}/api/tv-shows?${params}`);
+
+      // Update both TV shows and pagination data
+      set({ 
+        tvShows: response.data.data, 
+        pagination: response.data.pagination,
+        error: null 
+      });
 
     } catch (error) {
-
       set({ error: error.message, loading: false });
-
     } finally {
       set({ loading: false });
     }
-
   },
 
   deleteTvShow: async (id) => {
@@ -200,9 +244,11 @@ export const useTvShowStore = create((set, get) => ({
       await axios.delete(`${BASE_URL}/api/tv-shows/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      // Update the local state to remove the deleted TV show
-      set({ tvShows: get().tvShows.filter(tvShow => tvShow.show_id !== id) });
+      
       toast.success("TV show deleted successfully.");
+      
+      // Refresh the current page to reflect the deletion
+      get().fetchTvShows();
     } catch (error) {
       set({ error: error.message });
       toast.error("Failed to delete TV show.");

@@ -6,12 +6,13 @@ import TvShowCard from "../components/TvShowCard.jsx";
 import { PackageIcon } from "lucide-react";
 import AddTvShowModal from "../components/AddTvShowModal.jsx";
 import TvShowFilters from "../components/TvShowFilters.jsx";
+import Pagination from "../components/Pagination.jsx";
 
 const Dashboard = ({ setAuth }) => {
 
   const [name, setName] = useState("");
 
-  const { tvShows, loading, error, fetchTvShows, fetchFavorites, getFilteredTvShows, sort } = useTvShowStore();
+  const { tvShows, loading, error, fetchTvShows, fetchFavorites, getFilteredTvShows, sort, pagination } = useTvShowStore();
 
   // Get filtered TV shows
   const filteredTvShows = getFilteredTvShows();
@@ -89,9 +90,12 @@ const Dashboard = ({ setAuth }) => {
         <TvShowFilters />
 
         {/* Results count */}
-        {!loading && tvShows.length > 0 && (
+        {!loading && pagination.totalItems > 0 && (
           <div className="mb-6 text-sm text-base-content/70 bg-base-100 p-4 rounded-lg border border-base-300">
-            Showing <span className="font-bold text-primary">{filteredTvShows.length}</span> of <span className="font-bold text-secondary">{tvShows.length}</span> TV shows
+            Showing <span className="font-bold text-primary">{filteredTvShows.length}</span> of <span className="font-bold text-secondary">{pagination.totalItems}</span> TV shows
+            <span className="ml-2 text-xs bg-base-200 text-base-content px-2 py-1 rounded-full border border-base-300">
+              Page {pagination.currentPage} of {pagination.totalPages}
+            </span>
             {sort.field !== 'title' || sort.direction !== 'asc' ? (
               <span className="ml-2 text-xs bg-base-200 text-base-content px-2 py-1 rounded-full border border-base-300">
                 sorted by {sort.field} ({sort.direction === 'asc' ? 'A-Z' : 'Z-A'})
@@ -102,20 +106,15 @@ const Dashboard = ({ setAuth }) => {
 
         {error && <div className="alert alert-error mb-8 shadow-lg">Error: {error}</div>}
 
-        {filteredTvShows.length === 0 && !loading && (
+        {filteredTvShows.length === 0 && !loading && pagination.totalItems === 0 && (
           <div className="flex flex-col justify-center items-center h-96 space-y-6 bg-base-100 rounded-lg border border-base-300 shadow-lg">
             <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full p-8">
               <PackageIcon className="size-16 text-primary" />
             </div>
             <div className="text-center space-y-3">
-              <h3 className="text-2xl font-bold text-base-content">
-                {tvShows.length === 0 ? "No TV shows found" : "No TV shows match your filters"}
-              </h3>
+              <h3 className="text-2xl font-bold text-base-content">No TV shows found</h3>
               <p className="text-base-content/70 max-w-md leading-relaxed">
-                {tvShows.length === 0 
-                  ? "Get started by adding your first TV show to the tracker!"
-                  : "Try adjusting your filters or add a new TV show."
-                }
+                Get started by adding your first TV show to the tracker!
               </p>
             </div>
           </div>
@@ -126,11 +125,16 @@ const Dashboard = ({ setAuth }) => {
             <div className="loading loading-spinner loading-lg text-primary"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredTvShows.map(tvShow => (
-              <TvShowCard key={tvShow.show_id} tvShow={tvShow} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredTvShows.map(tvShow => (
+                <TvShowCard key={tvShow.show_id} tvShow={tvShow} />
+              ))}
+            </div>
+
+            {/* Pagination Component */}
+            <Pagination />
+          </>
         )}
 
       </main>

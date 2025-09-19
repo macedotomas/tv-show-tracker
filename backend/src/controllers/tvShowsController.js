@@ -8,6 +8,25 @@ import pool from '../config/db.js';
 
 export const getTVShows = async (req, res) => {
   try {
+    // Parse pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12; // Default 12 items per page
+    const offset = (page - 1) * limit;
+
+    // Validate pagination parameters
+    if (page < 1 || limit < 1 || limit > 100) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid pagination parameters. Page must be >= 1, limit must be between 1 and 100.' 
+      });
+    }
+
+    // Get total count for pagination metadata
+    const countQuery = 'SELECT COUNT(*) FROM tv_shows';
+    const countResult = await pool.query(countQuery);
+    const totalItems = parseInt(countResult.rows[0].count);
+    const totalPages = Math.ceil(totalItems / limit);
+
     const query = `
       SELECT 
         ts.*,
@@ -27,11 +46,24 @@ export const getTVShows = async (req, res) => {
       LEFT JOIN actors a ON sa.actor_id = a.actor_id
       GROUP BY ts.show_id
       ORDER BY ts.title
+      LIMIT $1 OFFSET $2
     `;
     
-    const { rows } = await pool.query(query);
-    console.log("Fetched TV shows with actors:", rows);
-    res.status(200).json({success: true, data: rows});
+    const { rows } = await pool.query(query, [limit, offset]);
+    console.log(`Fetched ${rows.length} TV shows with actors (page ${page}/${totalPages}):`, rows);
+    
+    res.status(200).json({
+      success: true, 
+      data: rows,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems,
+        itemsPerPage: limit,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1
+      }
+    });
   } catch (err) {
     console.error('Error fetching TV shows:', err);
     res.status(500).json({ success: false, message: 'Failed to fetch TV shows' });
