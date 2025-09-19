@@ -20,7 +20,7 @@ export const getTVShows = async (req, res) => {
 };
 
 export const createTVShow = async (req, res) => {
-  const { title, release_date, genre, type } = req.body;
+  const { title, description, genre, type, release_date, rating } = req.body;
 
   if (!title || !release_date || !genre || !type) {
     return res.status(400).json({ success: false, message: 'Title, release date, genre, and type are required' });
@@ -28,8 +28,8 @@ export const createTVShow = async (req, res) => {
   
   try {
     const { rows } = await pool.query(
-      'INSERT INTO tv_shows (title, release_date, genre, type) VALUES ($1, $2, $3, $4) RETURNING *',
-      [title, release_date, genre, type]
+      'INSERT INTO tv_shows (title, description, genre, type, release_date, rating) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [title, description || null, genre, type, release_date, rating || null]
     );
     res.status(201).json({ success: true, data: rows[0] });
   } catch (err) {
