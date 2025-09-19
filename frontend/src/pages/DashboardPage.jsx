@@ -5,12 +5,16 @@ import { useTvShowStore } from '../stores/useTvShowStore.jsx';
 import TvShowCard from "../components/TvShowCard.jsx";
 import { PackageIcon } from "lucide-react";
 import AddTvShowModal from "../components/AddTvShowModal.jsx";
+import TvShowFilters from "../components/TvShowFilters.jsx";
 
 const Dashboard = ({ setAuth }) => {
 
   const [name, setName] = useState("");
 
-  const { tvShows, loading, error, fetchTvShows } = useTvShowStore();
+  const { tvShows, loading, error, fetchTvShows, getFilteredTvShows } = useTvShowStore();
+
+  // Get filtered TV shows
+  const filteredTvShows = getFilteredTvShows();
 
 
   async function getName() {
@@ -64,17 +68,31 @@ const Dashboard = ({ setAuth }) => {
 
         <AddTvShowModal />
 
+        <TvShowFilters />
+
+        {/* Results count */}
+        {!loading && tvShows.length > 0 && (
+          <div className="mb-4 text-sm text-gray-600">
+            Showing {filteredTvShows.length} of {tvShows.length} TV shows
+          </div>
+        )}
+
         {error && <p className="alert alert-error mb-8">Error: {error}</p>}
 
-        {tvShows.length === 0 && !loading && (
+        {filteredTvShows.length === 0 && !loading && (
           <div className="flex flex-col justify-center items-center h-96 space-y-4">
             <div className="bg-base-100 rounded-full p-6">
               <PackageIcon className="size-12" />
             </div>
             <div className="text-center space-y-2">
-              <h3 className="text-2xl font-semibold ">No TV shows found</h3>
+              <h3 className="text-2xl font-semibold ">
+                {tvShows.length === 0 ? "No TV shows found" : "No TV shows match your filters"}
+              </h3>
               <p className="text-gray-500 max-w-sm">
-                Get started by adding your first TV show to the tracker!
+                {tvShows.length === 0 
+                  ? "Get started by adding your first TV show to the tracker!"
+                  : "Try adjusting your filters or add a new TV show."
+                }
               </p>
             </div>
           </div>
@@ -88,7 +106,7 @@ const Dashboard = ({ setAuth }) => {
           </div>
         ) : (
           <div className="grid grid-cols-1 mm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tvShows.map(tvShow => (
+            {filteredTvShows.map(tvShow => (
               <TvShowCard key={tvShow.show_id} tvShow={tvShow} />
             ))}
           </div>

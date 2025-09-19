@@ -12,6 +12,12 @@ export const useTvShowStore = create((set, get) => ({
   error: null,
   currentTvShow: null,
 
+  // filter state
+  filters: {
+    genre: "",
+    type: ""
+  },
+
   // form state
   formData: {
     title: "",
@@ -23,6 +29,40 @@ export const useTvShowStore = create((set, get) => ({
   },
 
   setFormData: (formData) => set({ formData }),
+
+  setFilters: (filters) => set({ filters }),
+
+  resetFilters: () => set({
+    filters: {
+      genre: "",
+      type: ""
+    }
+  }),
+
+  // computed filtered TV shows
+  getFilteredTvShows: () => {
+    const { tvShows, filters } = get();
+    
+    return tvShows.filter(tvShow => {
+      const genreMatch = !filters.genre || tvShow.genre.toLowerCase().includes(filters.genre.toLowerCase());
+      const typeMatch = !filters.type || tvShow.type.toLowerCase().includes(filters.type.toLowerCase());
+      
+      return genreMatch && typeMatch;
+    });
+  },
+
+  // get unique genres and types for filter dropdowns
+  getUniqueGenres: () => {
+    const { tvShows } = get();
+    const genres = [...new Set(tvShows.map(show => show.genre).filter(Boolean))];
+    return genres.sort();
+  },
+
+  getUniqueTypes: () => {
+    const { tvShows } = get();
+    const types = [...new Set(tvShows.map(show => show.type).filter(Boolean))];
+    return types.sort();
+  },
 
   resetFormData: () => set({
     formData: {
