@@ -13,42 +13,38 @@ import TvShowEditPage from '../pages/TvShowEditPage.jsx'
 
 function AppRoutes({ isAuthenticated, setAuth }) {
   return (
-    <div className="container">
-      <Routes>
-        <Route 
-          path="/" 
-          element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} 
-        />
+    <Routes>
+      <Route 
+        path="/" 
+        element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} 
+      />
 
-        <Route 
-          path="/login" 
-          element={!isAuthenticated ? <Login setAuth={setAuth} /> : <Navigate to="/dashboard" />} 
-        />
-        
-        <Route 
-          path="/register" 
-          element={!isAuthenticated ? <Register setAuth={setAuth} /> : <Navigate to="/dashboard" />} 
-        />
-
-        <Route 
-          path="/dashboard" 
-          element={<PrivateRoute isAuthenticated={isAuthenticated}><Dashboard setAuth={setAuth} /></PrivateRoute>} 
-        />
-
-        <Route 
-          path="/tv-shows/:id" 
-          element={<PrivateRoute isAuthenticated={isAuthenticated}><TvShowViewPage setAuth={setAuth} /></PrivateRoute>} 
-        />
-
-        <Route 
-          path="/tv-shows/:id/edit" 
-          element={<PrivateRoute isAuthenticated={isAuthenticated}><TvShowEditPage setAuth={setAuth} /></PrivateRoute>} 
-        />
-
-      </Routes>
+      <Route 
+        path="/login" 
+        element={!isAuthenticated ? <Login setAuth={setAuth} /> : <Navigate to="/dashboard" />} 
+      />
       
-      {/* <ToastContainer position="top-right" autoClose={3000} theme="colored" /> */}
-    </div>
+      <Route 
+        path="/register" 
+        element={!isAuthenticated ? <Register setAuth={setAuth} /> : <Navigate to="/dashboard" />} 
+      />
+
+      <Route 
+        path="/dashboard" 
+        element={<PrivateRoute isAuthenticated={isAuthenticated}><Dashboard setAuth={setAuth} /></PrivateRoute>} 
+      />
+
+      <Route 
+        path="/tv-shows/:id" 
+        element={<PrivateRoute isAuthenticated={isAuthenticated}><TvShowViewPage setAuth={setAuth} /></PrivateRoute>} 
+      />
+
+      <Route 
+        path="/tv-shows/:id/edit" 
+        element={<PrivateRoute isAuthenticated={isAuthenticated}><TvShowEditPage setAuth={setAuth} /></PrivateRoute>} 
+      />
+
+    </Routes>
   )
 }
 

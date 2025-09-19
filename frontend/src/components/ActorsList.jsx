@@ -56,12 +56,12 @@ function ActorsList({ actors, showDetailed = false }) {
 
   if (!actors || actors.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500">
-        <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full p-8 w-24 h-24 mx-auto mb-4 flex items-center justify-center">
-          <Users className="size-12 text-primary/50" />
+      <div className="text-center py-12 text-base-content/70 bg-base-200 rounded-lg border border-base-300">
+        <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full p-8 w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+          <Users className="size-12 text-primary/60" />
         </div>
-        <h3 className="text-lg font-semibold mb-2">No Cast Information</h3>
-        <p className="text-sm">Actor details are not available for this show</p>
+        <h3 className="text-lg font-semibold mb-2 text-base-content">No Cast Information</h3>
+        <p className="text-sm text-base-content/70">Actor details are not available for this show</p>
       </div>
     );
   }
@@ -109,13 +109,14 @@ function ActorsList({ actors, showDetailed = false }) {
   // Detailed view for details page
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="bg-gradient-to-br from-primary to-secondary rounded-full p-3">
+        <div className="bg-gradient-to-br from-primary to-secondary rounded-full p-3 shadow-lg">
           <Users className="size-6 text-white" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Featured Cast</h2>
-          <p className="text-gray-600 text-sm">{actors.length} actor{actors.length !== 1 ? 's' : ''}</p>
+          <h2 className="text-2xl font-bold text-base-content">Featured Cast</h2>
+          <p className="text-base-content/70 text-sm">{actors.length} actor{actors.length !== 1 ? 's' : ''}</p>
         </div>
       </div>
       

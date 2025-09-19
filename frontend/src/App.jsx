@@ -66,15 +66,13 @@ function App() {
 
 
   return (
-    <div className="container ">
-      <div className="min-h-screen bg-base-200 transition-colors duration-300" data-theme="forest">
+    <div className="min-h-screen bg-base-200 transition-colors duration-300" data-theme="forest">
 
-        <NavBar isAuthenticated={isAuthenticated} setAuth={setAuth} />
+      {isAuthenticated && <NavBar isAuthenticated={isAuthenticated} setAuth={setAuth} />}
 
-        <AppRoutes isAuthenticated={isAuthenticated} setAuth={setAuth} />
+      <AppRoutes isAuthenticated={isAuthenticated} setAuth={setAuth} />
 
-        <ToastContainer position="top-right" autoClose={3000} theme="colored" />
-      </div>
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
     </div>
   )
 }

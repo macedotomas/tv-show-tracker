@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html lang="en">
+<html lang="en" data-theme="tv-dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -9,12 +9,29 @@
       html, body, #root {
         height: 100%;
       }
-      /* Match DaisyUI "forest" bg-base-200 (dark) */
+      /* Custom dark theme background */
       body {
-        background-color: #1d232a;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        background-attachment: fixed;
+        min-height: 100vh;
+      }
+      
+      /* Custom scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #334155;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #64748b;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
       }
     </style>
-    <title>Vite + React</title>
+    <title>TV Show Tracker</title>
   </head>
   <body>
     <div id="root"></div>

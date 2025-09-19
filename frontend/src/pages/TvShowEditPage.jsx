@@ -81,29 +81,28 @@ const TvShowEditPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      {/* Header with Navigation */}
-      <div className="flex items-center justify-between mb-8">
-        <button onClick={() => navigate(`/tv-shows/${id}`)} className="btn btn-ghost">
-          <ArrowLeftIcon className="size-4 mr-2" />
-          Back to Show Details
-        </button>
-        
-        <button
-          onClick={() => navigate(`/tv-shows/${id}`)}
-          className="btn btn-outline"
-        >
-          <EyeIcon className="size-4 mr-2" />
-          View Show
-        </button>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-dark-bg via-dark-surface to-dark-card">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Header with Navigation */}
+        <div className="flex items-center justify-between mb-8 bg-base-100 p-6 rounded-lg border border-base-300 shadow-lg">
+          <button onClick={() => navigate(`/tv-shows/${id}`)} className="btn btn-outline hover:btn-neutral">
+            <ArrowLeftIcon className="size-4 mr-2" />
+            Back to Show Details
+          </button>
+          
+          <button
+            onClick={() => navigate(`/tv-shows/${id}`)}
+            className="btn btn-primary hover:scale-105 transition-all"
+          >
+            <EyeIcon className="size-4 mr-2" />
+            View Show
+          </button>
+        </div>
 
-      {/* Edit Form */}
-      <div className="card bg-base-100 shadow-lg">
-        <div className="card-body">
-          <h2 className="card-title text-3xl mb-6">Edit TV Show</h2>
-
-          <form onSubmit={(e) => {
+        {/* Edit Form */}
+        <div className="card bg-base-100 shadow-xl border border-base-300">
+          <div className="card-body">
+            <h2 className="card-title text-3xl mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Edit TV Show</h2>          <form onSubmit={(e) => {
             e.preventDefault();
             updateTvShow(id, () => navigate(`/tv-shows/${id}`));
           }} className="space-y-6">
@@ -293,6 +292,7 @@ const TvShowEditPage = () => {
             </div>
           </form>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -63,110 +63,110 @@ const TvShowViewPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
-      {/* Header with Navigation */}
-      <div className="flex items-center justify-between mb-8">
-        <button onClick={() => navigate("/")} className="btn btn-ghost">
-          <ArrowLeftIcon className="size-4 mr-2" />
-          Back to Dashboard
-        </button>
-        
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate(`/tv-shows/${id}/edit`)}
-            className="btn btn-primary"
-          >
-            <EditIcon className="size-4 mr-2" />
-            Edit Show
+    <div className="min-h-screen bg-gradient-to-br from-dark-bg via-dark-surface to-dark-card">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Header with Navigation */}
+        <div className="flex items-center justify-between mb-8 bg-base-100 p-6 rounded-lg border border-base-300 shadow-lg">
+          <button onClick={() => navigate("/")} className="btn btn-outline hover:btn-neutral">
+            <ArrowLeftIcon className="size-4 mr-2" />
+            Back to Dashboard
           </button>
-          <button
-            onClick={handleFavoriteToggle}
-            className={`btn ${isShowFavorite ? 'btn-error' : 'btn-outline'}`}
-          >
-            <Heart className={`w-4 h-4 mr-2 ${isShowFavorite ? 'fill-current' : ''}`} />
-            {isShowFavorite ? 'Favorited' : 'Add to Favorites'}
-          </button>
+          
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(`/tv-shows/${id}/edit`)}
+              className="btn btn-primary hover:scale-105 transition-all shadow-lg hover:shadow-primary/25"
+            >
+              <EditIcon className="size-4 mr-2" />
+              Edit Show
+            </button>
+            <button
+              onClick={handleFavoriteToggle}
+              className={`btn ${isShowFavorite ? 'btn-error' : 'btn-outline btn-neutral'} hover:scale-105 transition-all`}
+            >
+              <Heart className={`w-4 h-4 mr-2 ${isShowFavorite ? 'fill-current' : ''}`} />
+              {isShowFavorite ? 'Favorited' : 'Add to Favorites'}
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* TV Show Header */}
-      <div className="card bg-base-100 shadow-lg mb-8">
-        <div className="card-body">
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Title and Basic Info */}
-            <div className="flex-1">
-              <h1 className="text-4xl font-bold text-gray-800 mb-4">{currentTvShow.title}</h1>
-              
-              {/* Metadata */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <div className="flex items-center gap-2">
-                  <div className="bg-blue-100 rounded-full p-2">
-                    <Monitor className="size-4 text-blue-600" />
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-500 uppercase tracking-wide">Type</div>
-                    <div className="font-medium">{currentTvShow.type}</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <div className="bg-green-100 rounded-full p-2">
-                    <Tag className="size-4 text-green-600" />
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-500 uppercase tracking-wide">Genre</div>
-                    <div className="font-medium">{currentTvShow.genre}</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <div className="bg-purple-100 rounded-full p-2">
-                    <Calendar className="size-4 text-purple-600" />
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-500 uppercase tracking-wide">Release Date</div>
-                    <div className="font-medium">{formatDate(currentTvShow.release_date)}</div>
-                  </div>
-                </div>
-
-                {currentTvShow.rating && (
-                  <div className="flex items-center gap-2">
-                    <div className="bg-yellow-100 rounded-full p-2">
-                      <Star className="size-4 text-yellow-600" />
+        {/* TV Show Header */}
+        <div className="card bg-base-100 shadow-xl mb-8 border border-base-300">
+          <div className="card-body">
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Title and Basic Info */}
+              <div className="flex-1">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-6">{currentTvShow.title}</h1>
+                
+                {/* Metadata Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                  <div className="flex items-center gap-3 p-4 bg-base-200 rounded-lg border border-base-300">
+                    <div className="bg-blue-500/20 rounded-full p-3">
+                      <Monitor className="size-6 text-blue-400" />
                     </div>
                     <div>
-                      <div className="text-xs text-gray-500 uppercase tracking-wide">Rating</div>
-                      <div className="font-medium">{currentTvShow.rating}/10</div>
+                      <div className="text-xs text-base-content/60 uppercase tracking-wide font-medium">Type</div>
+                      <div className="font-bold text-blue-400">{currentTvShow.type}</div>
                     </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-4 bg-base-200 rounded-lg border border-base-300">
+                    <div className="bg-green-500/20 rounded-full p-3">
+                      <Tag className="size-6 text-green-400" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-base-content/60 uppercase tracking-wide font-medium">Genre</div>
+                      <div className="font-bold text-green-400">{currentTvShow.genre}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-4 bg-base-200 rounded-lg border border-base-300">
+                    <div className="bg-purple-500/20 rounded-full p-3">
+                      <Calendar className="size-6 text-purple-400" />
+                    </div>
+                    <div>
+                      <div className="text-xs text-base-content/60 uppercase tracking-wide font-medium">Release Date</div>
+                      <div className="font-bold text-purple-400">{formatDate(currentTvShow.release_date)}</div>
+                    </div>
+                  </div>
+
+                  {currentTvShow.rating && (
+                    <div className="flex items-center gap-3 p-4 bg-base-200 rounded-lg border border-base-300">
+                      <div className="bg-yellow-500/20 rounded-full p-3">
+                        <Star className="size-6 text-yellow-400" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-base-content/60 uppercase tracking-wide font-medium">Rating</div>
+                        <div className="font-bold text-yellow-400">{currentTvShow.rating}/10</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Description */}
+                {currentTvShow.description && (
+                  <div className="bg-base-200 p-6 rounded-lg border border-base-300">
+                    <h3 className="text-xl font-bold mb-3 text-base-content">Description</h3>
+                    <p className="text-base-content/80 leading-relaxed">{currentTvShow.description}</p>
                   </div>
                 )}
               </div>
-
-              {/* Description */}
-              {currentTvShow.description && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-2 text-gray-800">Description</h3>
-                  <p className="text-gray-600 leading-relaxed">{currentTvShow.description}</p>
-                </div>
-              )}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        {/* Actors Section */}
-        <div className="card bg-base-100 shadow-lg">
-          <div className="card-body">
-            <ActorsList actors={currentTvShow?.actors} showDetailed={true} />
+        </div>        {/* Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Actors Section */}
+          <div className="card bg-base-100 shadow-xl border border-base-300">
+            <div className="card-body">
+              <ActorsList actors={currentTvShow?.actors} showDetailed={true} />
+            </div>
           </div>
-        </div>
 
-        {/* Episodes Section */}
-        <div className="card bg-base-100 shadow-lg">
-          <div className="card-body">
-            <EpisodesList showId={currentTvShow.show_id} showTitle={currentTvShow.title} />
+          {/* Episodes Section */}
+          <div className="card bg-base-100 shadow-xl border border-base-300">
+            <div className="card-body">
+              <EpisodesList showId={currentTvShow.show_id} showTitle={currentTvShow.title} />
+            </div>
           </div>
         </div>
       </div>
