@@ -11,7 +11,7 @@ const Dashboard = ({ setAuth }) => {
 
   const [name, setName] = useState("");
 
-  const { tvShows, loading, error, fetchTvShows, getFilteredTvShows, sort } = useTvShowStore();
+  const { tvShows, loading, error, fetchTvShows, fetchFavorites, getFilteredTvShows, sort } = useTvShowStore();
 
   // Get filtered TV shows
   const filteredTvShows = getFilteredTvShows();
@@ -41,7 +41,8 @@ const Dashboard = ({ setAuth }) => {
   useEffect(() => {
     getName();
     fetchTvShows();
-  }, [fetchTvShows]);
+    fetchFavorites();
+  }, [fetchTvShows, fetchFavorites]);
 
 
   const logout = e => {

@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useTvShowStore } from "../stores/useTvShowStore.jsx";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeftIcon, Package2Icon, FileTextIcon, TagIcon, MonitorIcon, CalendarIcon, StarIcon, SaveIcon, Trash2Icon, ChevronDownIcon } from "lucide-react";
+import { ArrowLeftIcon, Package2Icon, FileTextIcon, TagIcon, MonitorIcon, CalendarIcon, StarIcon, SaveIcon, Trash2Icon, ChevronDownIcon, Heart } from "lucide-react";
 import ActorsList from "../components/ActorsList.jsx";
 
 const BASE_URL = "http://localhost:3000";
@@ -22,7 +22,10 @@ const TvShowDetails = ({ setAuth }) => {
     error,
     fetchTvShow,
     updateTvShow,
-    deleteTvShow
+    deleteTvShow,
+    addToFavorites,
+    removeFromFavorites,
+    isFavorite
   } = useTvShowStore();
 
   const navigate = useNavigate();
@@ -49,6 +52,18 @@ const TvShowDetails = ({ setAuth }) => {
   const handleGenreSelect = (genre) => {
     setFormData({ ...safeFormData, genre });
     setIsGenreDropdownOpen(false);
+  };
+
+  const isShowFavorite = currentTvShow ? isFavorite(currentTvShow.show_id) : false;
+
+  const handleFavoriteToggle = () => {
+    if (currentTvShow) {
+      if (isShowFavorite) {
+        removeFromFavorites(currentTvShow.show_id);
+      } else {
+        addToFavorites(currentTvShow.show_id);
+      }
+    }
   };
 
   useEffect(() => {
@@ -281,6 +296,14 @@ const TvShowDetails = ({ setAuth }) => {
                   }}
                 >
                   <Trash2Icon className="size-5" />
+                </button>
+                <button
+                  type="button"
+                  className={`btn ${isShowFavorite ? 'btn-error' : 'btn-outline'} btn-outline`}
+                  onClick={handleFavoriteToggle}
+                >
+                  <Heart className={`w-4 h-4 ${isShowFavorite ? 'fill-current' : ''}`} />
+                  {isShowFavorite ? 'Favorited' : 'Favorite'}
                 </button>
               </div>
               

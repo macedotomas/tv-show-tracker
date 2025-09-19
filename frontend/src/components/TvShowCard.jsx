@@ -1,11 +1,21 @@
-import { EditIcon, Trash2Icon, Users } from 'lucide-react'
+import { EditIcon, Trash2Icon, Users, Heart } from 'lucide-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useTvShowStore } from '../stores/useTvShowStore.jsx'
 
 function TvShowCard({ tvShow }) {
 
-  const { deleteTvShow } = useTvShowStore();
+  const { deleteTvShow, addToFavorites, removeFromFavorites, isFavorite } = useTvShowStore();
+  
+  const isShowFavorite = isFavorite(tvShow.show_id);
+
+  const handleFavoriteToggle = () => {
+    if (isShowFavorite) {
+      removeFromFavorites(tvShow.show_id);
+    } else {
+      addToFavorites(tvShow.show_id);
+    }
+  };
 
   return (
     <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300">
@@ -46,6 +56,13 @@ function TvShowCard({ tvShow }) {
 
         {/* Action Buttons */}
         <div className="card-actions justify-end mt-4">
+          <button 
+            onClick={handleFavoriteToggle}
+            className={`btn btn-sm ${isShowFavorite ? 'btn-error' : 'btn-outline'}`}
+            title={isShowFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <Heart className={`size-4 ${isShowFavorite ? 'fill-current' : ''}`} />
+          </button>
           <Link to={`/tv-shows/${tvShow.show_id}`} className="btn btn-sm btn-info btn-outline">
             <EditIcon className="size-4" />
           </Link>

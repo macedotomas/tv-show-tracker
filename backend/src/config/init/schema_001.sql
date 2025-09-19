@@ -299,6 +299,111 @@ INSERT INTO tv_shows (title, description, genre, type, release_date, rating) VAL
   INSERT INTO email_outbox (to_user_id, subject, body)
   VALUES (1, 'Welcome, Alice!', 'Thanks for signing up 🎉');
 
+
+  -- More users
+INSERT INTO users (username, email, password) VALUES
+  ('diana',   'diana@example.com',   'hash_diana'),
+  ('eduardo', 'eduardo@example.com', 'hash_eduardo'),
+  ('filipa',  'filipa@example.com',  'hash_filipa'),
+  ('goncalo', 'goncalo@example.com', 'hash_goncalo'),
+  ('helena',  'helena@example.com',  'hash_helena'),
+  ('ivo',     'ivo@example.com',     'hash_ivo'),
+  ('joana',   'joana@example.com',   'hash_joana'),
+  ('karim',   'karim@example.com',   'hash_karim')
+ON CONFLICT DO NOTHING;
+
+-- Give 'user' role to the new users
+INSERT INTO user_roles (user_id, role_id)
+SELECT u.user_id, r.role_id
+FROM users u CROSS JOIN roles r
+WHERE r.name = 'user' AND u.username IN ('diana','eduardo','filipa','goncalo','helena','ivo','joana','karim')
+ON CONFLICT DO NOTHING;
+
+-- Tokens for a couple of users
+INSERT INTO tokens (user_id, token, expires_at)
+SELECT u.user_id, 'tok_' || u.username || '_001', NOW() + INTERVAL '365 days'
+FROM users u
+WHERE u.username IN ('diana','eduardo')
+ON CONFLICT DO NOTHING;
+
+-- Extra TV shows
+INSERT INTO tv_shows (title, description, genre, type, release_date, rating) VALUES
+  ('Breaking Bad', 'A chemistry teacher turns to making meth after a cancer diagnosis.', 'Crime', 'Series', '2008-01-20', 9.5),
+  ('Stranger Things', 'Kids in 1980s Indiana face supernatural forces and secret experiments.', 'Sci-Fi', 'Series', '2016-07-15', 8.8),
+  ('The Office (US)', 'Mockumentary about office employees at Dunder Mifflin.', 'Comedy', 'Series', '2005-03-24', 8.9),
+  ('Chernobyl', 'Miniseries about the 1986 nuclear disaster.', 'Drama', 'Miniseries', '2019-05-06', 9.4),
+  ('The Last of Us', 'A hardened smuggler escorts a teenage girl across a post‑pandemic U.S.', 'Drama', 'Series', '2023-01-15', 8.8),
+  ('Severance', 'Employees undergo a procedure to separate work and personal memories.', 'Sci-Fi', 'Series', '2022-02-18', 8.7)
+ON CONFLICT DO NOTHING;
+
+-- Episodes for existing shows (use subselects to reference show_id)
+INSERT INTO episodes (show_id, title, episode_number, season_number, release_date) VALUES
+  ((SELECT show_id FROM tv_shows WHERE title='Game of Thrones'), 'Winter Is Coming', 1, 1, '2011-04-17'),
+  ((SELECT show_id FROM tv_shows WHERE title='Game of Thrones'), 'The Kingsroad', 2, 1, '2011-04-24'),
+  ((SELECT show_id FROM tv_shows WHERE title='The Crown'), 'Wolferton Splash', 1, 1, '2016-11-04'),
+  ((SELECT show_id FROM tv_shows WHERE title='Stranger Things'), 'The Vanishing of Will Byers', 1, 1, '2016-07-15'),
+  ((SELECT show_id FROM tv_shows WHERE title='The Office (US)'), 'Pilot', 1, 1, '2005-03-24'),
+  ((SELECT show_id FROM tv_shows WHERE title='The Office (US)'), 'Diversity Day', 2, 1, '2005-03-29'),
+  ((SELECT show_id FROM tv_shows WHERE title='Chernobyl'), '1:23:45', 1, 1, '2019-05-06'),
+  ((SELECT show_id FROM tv_shows WHERE title='The Last of Us'), 'When You''re Lost in the Darkness', 1, 1, '2023-01-15')
+ON CONFLICT DO NOTHING;
+
+-- New actors (skip ones that likely already exist in your file)
+INSERT INTO actors (name, birth_date, biography) VALUES
+  ('Bob Odenkirk', '1962-10-22', 'American actor known for Better Call Saul.'),
+  ('Rhea Seehorn', '1972-05-12', 'American actress known for Better Call Saul.'),
+  ('Jared Harris', '1961-08-24', 'British actor known for Chernobyl.'),
+  ('Paul Mescal', '1996-02-02', 'Irish actor known for Normal People.'),
+  ('Pedro Pascal', '1975-04-02', 'Chilean-American actor known for The Mandalorian and The Last of Us.')
+ON CONFLICT DO NOTHING;
+
+-- Link actors to shows (via subselects)
+INSERT INTO show_actors (show_id, actor_id)
+SELECT (SELECT show_id FROM tv_shows WHERE title='Chernobyl'),
+       a.actor_id
+FROM actors a
+WHERE a.name IN ('Jared Harris')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO show_actors (show_id, actor_id)
+SELECT (SELECT show_id FROM tv_shows WHERE title='The Last of Us'),
+       a.actor_id
+FROM actors a
+WHERE a.name IN ('Pedro Pascal')
+ON CONFLICT DO NOTHING;
+
+-- Favorites for the new users
+INSERT INTO favorites (user_id, show_id)
+SELECT u.user_id, s.show_id
+FROM users u
+JOIN tv_shows s ON s.title IN ('Game of Thrones','The Office (US)','Stranger Things')
+WHERE u.username IN ('diana','eduardo','filipa')
+ON CONFLICT DO NOTHING;
+
+-- Recommendations for the new users
+INSERT INTO recommendations (user_id, show_id)
+SELECT u.user_id, s.show_id
+FROM users u
+JOIN tv_shows s ON s.title IN ('Chernobyl','Severance')
+WHERE u.username IN ('goncalo','helena')
+ON CONFLICT DO NOTHING;
+
+-- Email outbox samples
+INSERT INTO email_outbox (to_user_id, subject, body, status)
+SELECT u.user_id, 'Weekly Picks', 'Here are some shows you might like ✨', 'pending'
+FROM users u
+WHERE u.username IN ('diana','helena')
+ON CONFLICT DO NOTHING;
+
+-- User consents
+INSERT INTO user_consents (user_id, policy_version)
+SELECT u.user_id, 'v1.0'
+FROM users u
+WHERE u.username IN ('diana','eduardo','filipa','goncalo','helena','ivo','joana','karim')
+ON CONFLICT DO NOTHING;
+
+-- =============================================================
+
   -- 3) Indexes ------------------------------------------------------------
   -- FK helpers
   CREATE INDEX idx_tokens_user_id           ON tokens(user_id);

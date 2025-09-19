@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 //Routes
 import tvShowsRoutes from './src/routes/tvShowsRoutes.js';
 import actorsRoutes from './src/routes/actorsRoutes.js';
+import favoritesRoutes from './src/routes/favoritesRoutes.js';
 import jwtAuthRoutes from './src/routes/jwtAuthRoutes.js';
 import dashboardRoutes from './src/routes/dashboardRoutes.js';
 
@@ -29,6 +30,8 @@ app.use(morgan('dev')); // to log HTTP requests
 app.use('/api/tv-shows', tvShowsRoutes);
 
 app.use('/api/actors', actorsRoutes);
+
+app.use('/api/favorites', favoritesRoutes);
 
 app.use('/auth', jwtAuthRoutes);
 

@@ -8,6 +8,7 @@ const BASE_URL = 'http://localhost:3000';
 
 export const useTvShowStore = create((set, get) => ({
   tvShows: [],
+  favorites: [],
   loading: false,
   error: null,
   currentTvShow: null,
@@ -267,6 +268,81 @@ export const useTvShowStore = create((set, get) => ({
     } finally {
       set({ loading: false });
     }
+  },
+
+  // Favorites management
+  fetchFavorites: async () => {
+    set({ loading: true, error: null });
+    try {
+      const token = localStorage.getItem("token") || '';
+      const response = await axios.get(`${BASE_URL}/api/favorites`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      set({ favorites: response.data.data, error: null });
+    } catch (error) {
+      set({ error: error.message });
+      toast.error("Failed to fetch favorites.");
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  addToFavorites: async (showId) => {
+    try {
+      const token = localStorage.getItem("token") || '';
+      await axios.post(`${BASE_URL}/api/favorites/${showId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Update local state by adding to favorites
+      const { tvShows } = get();
+      const show = tvShows.find(s => s.show_id === showId);
+      if (show) {
+        set({ favorites: [...get().favorites, show] });
+      }
+      
+      toast.success("Added to favorites!");
+    } catch (error) {
+      if (error.response?.status === 409) {
+        toast.info("Already in favorites!");
+      } else {
+        toast.error("Failed to add to favorites.");
+      }
+    }
+  },
+
+  removeFromFavorites: async (showId) => {
+    try {
+      const token = localStorage.getItem("token") || '';
+      await axios.delete(`${BASE_URL}/api/favorites/${showId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Update local state by removing from favorites
+      set({ favorites: get().favorites.filter(show => show.show_id !== showId) });
+      
+      toast.success("Removed from favorites!");
+    } catch (error) {
+      toast.error("Failed to remove from favorites.");
+    }
+  },
+
+  checkFavoriteStatus: async (showId) => {
+    try {
+      const token = localStorage.getItem("token") || '';
+      const response = await axios.get(`${BASE_URL}/api/favorites/check/${showId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return response.data.data.isFavorite;
+    } catch (error) {
+      console.error("Failed to check favorite status:", error);
+      return false;
+    }
+  },
+
+  isFavorite: (showId) => {
+    const { favorites } = get();
+    return favorites.some(show => show.show_id === showId);
   }
 
 }));
