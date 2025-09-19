@@ -1,7 +1,59 @@
-import React from 'react';
-import { Users, Calendar, Info, Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { Users, Calendar, Info, Star, ChevronDown, ChevronUp, Tv, ExternalLink } from 'lucide-react';
+import axios from 'axios';
+
+const BASE_URL = 'http://localhost:3000';
 
 function ActorsList({ actors, showDetailed = false }) {
+  const [expandedActors, setExpandedActors] = useState(new Set());
+  const [actorTvShows, setActorTvShows] = useState({});
+  const [loadingActors, setLoadingActors] = useState(new Set());
+
+  const fetchActorTvShows = async (actorId) => {
+    if (actorTvShows[actorId] || loadingActors.has(actorId)) {
+      return; // Already fetched or currently loading
+    }
+
+    setLoadingActors(prev => new Set([...prev, actorId]));
+    
+    try {
+      const token = localStorage.getItem("token") || '';
+      const response = await axios.get(`${BASE_URL}/api/actors/${actorId}/tv-shows`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      setActorTvShows(prev => ({
+        ...prev,
+        [actorId]: response.data.data
+      }));
+    } catch (error) {
+      console.error('Error fetching actor TV shows:', error);
+      setActorTvShows(prev => ({
+        ...prev,
+        [actorId]: []
+      }));
+    } finally {
+      setLoadingActors(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(actorId);
+        return newSet;
+      });
+    }
+  };
+
+  const toggleActorExpansion = async (actorId) => {
+    const newExpanded = new Set(expandedActors);
+    
+    if (newExpanded.has(actorId)) {
+      newExpanded.delete(actorId);
+    } else {
+      newExpanded.add(actorId);
+      await fetchActorTvShows(actorId);
+    }
+    
+    setExpandedActors(newExpanded);
+  };
+
   if (!actors || actors.length === 0) {
     return (
       <div className="text-center py-12 text-gray-500">
@@ -135,13 +187,96 @@ function ActorsList({ actors, showDetailed = false }) {
                         </div>
                       )}
                     </div>
-                  </div>
-                  
-                  {/* Decorative element */}
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0">
-                    <div className="bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full p-2">
-                      <Star className="size-4 text-primary" />
+                    
+                    {/* Filmography Toggle Button */}
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <button
+                        onClick={() => toggleActorExpansion(actor.actor_id)}
+                        className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors duration-200 text-sm font-medium"
+                      >
+                        <Tv className="size-4" />
+                        <span>Filmography</span>
+                        {expandedActors.has(actor.actor_id) ? (
+                          <ChevronUp className="size-4" />
+                        ) : (
+                          <ChevronDown className="size-4" />
+                        )}
+                      </button>
                     </div>
+
+                    {/* Filmography Section */}
+                    {expandedActors.has(actor.actor_id) && (
+                      <div className="mt-4 space-y-3">
+                        {loadingActors.has(actor.actor_id) ? (
+                          <div className="flex items-center justify-center py-4">
+                            <div className="loading loading-spinner loading-md"></div>
+                            <span className="ml-2 text-sm text-gray-600">Loading filmography...</span>
+                          </div>
+                        ) : (
+                          <>
+                            {actorTvShows[actor.actor_id]?.length > 0 ? (
+                              <>
+                                <div className="flex items-center gap-2 mb-3">
+                                  <div className="bg-purple-100 rounded-full p-1">
+                                    <Tv className="size-3 text-purple-600" />
+                                  </div>
+                                  <h4 className="text-sm font-semibold text-gray-700">
+                                    TV Shows ({actorTvShows[actor.actor_id].length})
+                                  </h4>
+                                </div>
+                                <div className="grid gap-2 max-h-64 overflow-y-auto">
+                                  {actorTvShows[actor.actor_id].map((show) => (
+                                    <div
+                                      key={show.show_id}
+                                      className="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors duration-200 group"
+                                    >
+                                      <div className="flex items-start justify-between gap-2">
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex items-center gap-2">
+                                            <h5 className="font-medium text-gray-800 text-sm truncate">
+                                              {show.title}
+                                            </h5>
+                                            <a
+                                              href={`/tv-shows/${show.show_id}`}
+                                              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                              title="View TV Show Details"
+                                            >
+                                              <ExternalLink className="size-3 text-gray-500 hover:text-primary" />
+                                            </a>
+                                          </div>
+                                          <div className="flex items-center gap-4 mt-1 text-xs text-gray-600">
+                                            <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+                                              {show.type}
+                                            </span>
+                                            <span>{show.genre}</span>
+                                            {show.release_date && (
+                                              <span>
+                                                {new Date(show.release_date).getFullYear()}
+                                              </span>
+                                            )}
+                                            {show.rating && (
+                                              <div className="flex items-center gap-1">
+                                                <Star className="size-3 text-yellow-500 fill-current" />
+                                                <span>{show.rating}/10</span>
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </>
+                            ) : (
+                              <div className="text-center py-4 text-gray-500">
+                                <Tv className="size-8 mx-auto mb-2 text-gray-400" />
+                                <p className="text-sm">No TV shows found for this actor</p>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
