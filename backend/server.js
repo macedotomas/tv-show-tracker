@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import tvShowsRoutes from './src/routes/tvShowsRoutes.js';
 import actorsRoutes from './src/routes/actorsRoutes.js';
 import favoritesRoutes from './src/routes/favoritesRoutes.js';
+import episodesRoutes from './src/routes/episodesRoutes.js';
 import jwtAuthRoutes from './src/routes/jwtAuthRoutes.js';
 import dashboardRoutes from './src/routes/dashboardRoutes.js';
 
@@ -32,6 +33,8 @@ app.use('/api/tv-shows', tvShowsRoutes);
 app.use('/api/actors', actorsRoutes);
 
 app.use('/api/favorites', favoritesRoutes);
+
+app.use('/api/episodes', episodesRoutes);
 
 app.use('/auth', jwtAuthRoutes);
 

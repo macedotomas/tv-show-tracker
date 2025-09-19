@@ -8,7 +8,8 @@ import PrivateRoute from '../utils/PrivateRoute.jsx'
 import Register from '../pages/RegisterPage.jsx'
 import Login from '../pages/LoginPage.jsx'
 import Dashboard from '../pages/DashboardPage.jsx'
-import TvShowDetails from '../pages/TvShowDetailsPage.jsx'
+import TvShowViewPage from '../pages/TvShowViewPage.jsx'
+import TvShowEditPage from '../pages/TvShowEditPage.jsx'
 
 function AppRoutes({ isAuthenticated, setAuth }) {
   return (
@@ -36,7 +37,12 @@ function AppRoutes({ isAuthenticated, setAuth }) {
 
         <Route 
           path="/tv-shows/:id" 
-          element={<PrivateRoute isAuthenticated={isAuthenticated}><TvShowDetails setAuth={setAuth} /></PrivateRoute>} 
+          element={<PrivateRoute isAuthenticated={isAuthenticated}><TvShowViewPage setAuth={setAuth} /></PrivateRoute>} 
+        />
+
+        <Route 
+          path="/tv-shows/:id/edit" 
+          element={<PrivateRoute isAuthenticated={isAuthenticated}><TvShowEditPage setAuth={setAuth} /></PrivateRoute>} 
         />
 
       </Routes>

@@ -1,4 +1,4 @@
-import { EditIcon, Trash2Icon, Users, Heart } from 'lucide-react'
+import { EyeIcon, Trash2Icon, Users, Heart } from 'lucide-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useTvShowStore } from '../stores/useTvShowStore.jsx'
@@ -63,8 +63,8 @@ function TvShowCard({ tvShow }) {
           >
             <Heart className={`size-4 ${isShowFavorite ? 'fill-current' : ''}`} />
           </button>
-          <Link to={`/tv-shows/${tvShow.show_id}`} className="btn btn-sm btn-info btn-outline">
-            <EditIcon className="size-4" />
+          <Link to={`/tv-shows/${tvShow.show_id}`} className="btn btn-sm btn-info btn-outline" title="View details">
+            <EyeIcon className="size-4" />
           </Link>
           <button className="btn btn-sm btn-error btn-outline" onClick={() => deleteTvShow(tvShow.show_id)}>
             <Trash2Icon className="size-4" />
