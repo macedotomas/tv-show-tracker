@@ -18,6 +18,12 @@ export const useTvShowStore = create((set, get) => ({
     type: ""
   },
 
+  // sort state
+  sort: {
+    field: "title", // default sort by title
+    direction: "asc" // asc or desc
+  },
+
   // form state
   formData: {
     title: "",
@@ -32,6 +38,15 @@ export const useTvShowStore = create((set, get) => ({
 
   setFilters: (filters) => set({ filters }),
 
+  setSort: (sort) => set({ sort }),
+
+  setSortField: (field) => {
+    const currentSort = get().sort;
+    // If clicking the same field, toggle direction
+    const direction = currentSort.field === field && currentSort.direction === "asc" ? "desc" : "asc";
+    set({ sort: { field, direction } });
+  },
+
   resetFilters: () => set({
     filters: {
       genre: "",
@@ -39,15 +54,50 @@ export const useTvShowStore = create((set, get) => ({
     }
   }),
 
+  resetSort: () => set({
+    sort: {
+      field: "title",
+      direction: "asc"
+    }
+  }),
+
   // computed filtered TV shows
   getFilteredTvShows: () => {
-    const { tvShows, filters } = get();
+    const { tvShows, filters, sort } = get();
     
-    return tvShows.filter(tvShow => {
+    // First filter
+    let filtered = tvShows.filter(tvShow => {
       const genreMatch = !filters.genre || tvShow.genre.toLowerCase().includes(filters.genre.toLowerCase());
       const typeMatch = !filters.type || tvShow.type.toLowerCase().includes(filters.type.toLowerCase());
       
       return genreMatch && typeMatch;
+    });
+
+    // Then sort
+    return filtered.sort((a, b) => {
+      let aValue = a[sort.field];
+      let bValue = b[sort.field];
+
+      // Handle different data types
+      if (sort.field === 'release_date') {
+        aValue = new Date(aValue);
+        bValue = new Date(bValue);
+      } else if (sort.field === 'rating') {
+        aValue = parseFloat(aValue) || 0;
+        bValue = parseFloat(bValue) || 0;
+      } else if (typeof aValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+
+      let comparison = 0;
+      if (aValue > bValue) {
+        comparison = 1;
+      } else if (aValue < bValue) {
+        comparison = -1;
+      }
+
+      return sort.direction === 'desc' ? comparison * -1 : comparison;
     });
   },
 

@@ -11,7 +11,7 @@ const Dashboard = ({ setAuth }) => {
 
   const [name, setName] = useState("");
 
-  const { tvShows, loading, error, fetchTvShows, getFilteredTvShows } = useTvShowStore();
+  const { tvShows, loading, error, fetchTvShows, getFilteredTvShows, sort } = useTvShowStore();
 
   // Get filtered TV shows
   const filteredTvShows = getFilteredTvShows();
@@ -74,6 +74,11 @@ const Dashboard = ({ setAuth }) => {
         {!loading && tvShows.length > 0 && (
           <div className="mb-4 text-sm text-gray-600">
             Showing {filteredTvShows.length} of {tvShows.length} TV shows
+            {sort.field !== 'title' || sort.direction !== 'asc' ? (
+              <span className="ml-2 text-xs bg-gray-100 px-2 py-1 rounded">
+                sorted by {sort.field} ({sort.direction === 'asc' ? 'A-Z' : 'Z-A'})
+              </span>
+            ) : null}
           </div>
         )}
 
