@@ -210,16 +210,77 @@ INSERT INTO tv_shows (title, description, genre, type, release_date, rating) VAL
   ('Winona Ryder', '1971-10-29', 'American actress starring in Stranger Things.'),
   ('Millie Bobby Brown', '2004-02-19', 'British actress known for playing Eleven.'),
   ('Steve Carell', '1962-08-16', 'American actor and comedian, star of The Office.'),
-  ('Henry Cavill', '1983-05-05', 'British actor known for playing Geralt in The Witcher.');
+  ('Henry Cavill', '1983-05-05', 'British actor known for playing Geralt in The Witcher.'),
+  
+  -- Game of Thrones actors
+  ('Peter Dinklage', '1969-06-11', 'American actor known for playing Tyrion Lannister in Game of Thrones.'),
+  ('Emilia Clarke', '1986-10-23', 'British actress known for playing Daenerys Targaryen.'),
+  ('Kit Harington', '1986-12-26', 'British actor known for playing Jon Snow.'),
+  
+  -- The Crown actors
+  ('Claire Foy', '1984-04-16', 'British actress known for playing Queen Elizabeth II in The Crown.'),
+  ('Matt Smith', '1982-10-28', 'British actor known for playing Prince Philip.'),
+  
+  -- The Sopranos actors
+  ('James Gandolfini', '1961-09-18', 'American actor known for playing Tony Soprano.'),
+  ('Edie Falco', '1963-07-05', 'American actress known for playing Carmela Soprano.'),
+  
+  -- Friends actors
+  ('Jennifer Aniston', '1969-02-11', 'American actress known for playing Rachel Green in Friends.'),
+  ('Courteney Cox', '1964-06-15', 'American actress known for playing Monica Geller.'),
+  ('Matthew Perry', '1969-08-19', 'American actor known for playing Chandler Bing.'),
+  
+  -- The Mandalorian actors
+  ('Pedro Pascal', '1975-04-02', 'Chilean-American actor known for playing The Mandalorian.'),
+  ('Gina Carano', '1982-04-16', 'American actress and former MMA fighter.'),
+  
+  -- Westworld actors
+  ('Evan Rachel Wood', '1987-09-07', 'American actress known for playing Dolores Abernathy.'),
+  ('Anthony Hopkins', '1937-12-31', 'Welsh actor known for playing Dr. Robert Ford.'),
+  
+  -- Black Mirror actors
+  ('Jesse Plemons', '1988-04-02', 'American actor appearing in multiple Black Mirror episodes.'),
+  ('Bryce Dallas Howard', '1981-03-02', 'American actress and director.'),
+  
+  -- Vikings actors
+  ('Travis Fimmel', '1979-07-15', 'Australian actor known for playing Ragnar Lothbrok.'),
+  ('Katheryn Winnick', '1977-12-17', 'Canadian actress known for playing Lagertha.'),
+  
+  -- The Boys actors
+  ('Karl Urban', '1972-06-07', 'New Zealand actor known for playing Billy Butcher.'),
+  ('Antony Starr', '1975-10-25', 'New Zealand actor known for playing Homelander.');
 
   -- Show–actors
   INSERT INTO show_actors (show_id, actor_id) VALUES
-  (1, 1),
-  (1, 2),
-  (2, 3),
-  (2, 4),
-  (3, 5),
-  (4, 6);
+  -- Game of Thrones (show_id: 1)
+  (1, 7), (1, 8), (1, 9),
+  
+  -- The Crown (show_id: 2) 
+  (2, 10), (2, 11),
+  
+  -- The Sopranos (show_id: 3)
+  (3, 12), (3, 13),
+  
+  -- Dark (show_id: 4) - keeping Henry Cavill for now
+  (4, 6),
+  
+  -- Westworld (show_id: 6)
+  (6, 19), (6, 20),
+  
+  -- The Mandalorian (show_id: 7)
+  (7, 17), (7, 18),
+  
+  -- Black Mirror (show_id: 8)
+  (8, 21), (8, 22),
+  
+  -- Friends (show_id: 11)
+  (11, 14), (11, 15), (11, 16),
+  
+  -- Vikings (show_id: 18)
+  (18, 23), (18, 24),
+  
+  -- The Boys (show_id: 17)
+  (17, 25), (17, 26);
 
   -- Favorites
   INSERT INTO favorites (user_id, show_id) VALUES

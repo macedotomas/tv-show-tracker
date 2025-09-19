@@ -8,15 +8,34 @@ import pool from '../config/db.js';
 
 export const getTVShows = async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM tv_shows');
-    console.log("Fetched TV shows:", rows);
+    const query = `
+      SELECT 
+        ts.*,
+        COALESCE(
+          JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'actor_id', a.actor_id,
+              'name', a.name,
+              'birth_date', a.birth_date,
+              'biography', a.biography
+            )
+          ) FILTER (WHERE a.actor_id IS NOT NULL),
+          '[]'
+        ) as actors
+      FROM tv_shows ts
+      LEFT JOIN show_actors sa ON ts.show_id = sa.show_id
+      LEFT JOIN actors a ON sa.actor_id = a.actor_id
+      GROUP BY ts.show_id
+      ORDER BY ts.title
+    `;
+    
+    const { rows } = await pool.query(query);
+    console.log("Fetched TV shows with actors:", rows);
     res.status(200).json({success: true, data: rows});
   } catch (err) {
     console.error('Error fetching TV shows:', err);
     res.status(500).json({ success: false, message: 'Failed to fetch TV shows' });
   }
-
-
 };
 
 export const createTVShow = async (req, res) => {
@@ -41,7 +60,28 @@ export const createTVShow = async (req, res) => {
 export const getTVShow = async (req, res) => {
   const { id } = req.params;
   try {
-    const { rows } = await pool.query('SELECT * FROM tv_shows WHERE show_id = $1', [id]);
+    const query = `
+      SELECT 
+        ts.*,
+        COALESCE(
+          JSON_AGG(
+            JSON_BUILD_OBJECT(
+              'actor_id', a.actor_id,
+              'name', a.name,
+              'birth_date', a.birth_date,
+              'biography', a.biography
+            )
+          ) FILTER (WHERE a.actor_id IS NOT NULL),
+          '[]'
+        ) as actors
+      FROM tv_shows ts
+      LEFT JOIN show_actors sa ON ts.show_id = sa.show_id
+      LEFT JOIN actors a ON sa.actor_id = a.actor_id
+      WHERE ts.show_id = $1
+      GROUP BY ts.show_id
+    `;
+    
+    const { rows } = await pool.query(query, [id]);
     if (rows.length === 0) {
       return res.status(404).json({ success: false, message: 'TV show not found' });
     }

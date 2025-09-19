@@ -1,4 +1,4 @@
-import { EditIcon, Trash2Icon } from 'lucide-react'
+import { EditIcon, Trash2Icon, Users } from 'lucide-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useTvShowStore } from '../stores/useTvShowStore.jsx'
@@ -16,6 +16,32 @@ function TvShowCard({ tvShow }) {
         <p><strong>Genre:</strong> {tvShow.genre}</p>
         <p><strong>Type:</strong> {tvShow.type}</p>
         <p><strong>Release Date:</strong> {new Date(tvShow.release_date).toLocaleDateString()}</p>
+
+        {/* Featured Actors */}
+        {tvShow.actors && tvShow.actors.length > 0 && (
+          <div className="mt-3">
+            <div className="flex items-center gap-1 mb-2">
+              <Users className="size-4 text-primary" />
+              <span className="text-sm font-semibold text-primary">Cast:</span>
+            </div>
+            <div className="space-y-1">
+              {tvShow.actors.slice(0, 2).map(actor => (
+                <div 
+                  key={actor.actor_id} 
+                  className="text-xs text-gray-600"
+                  title={actor.biography || `Born: ${actor.birth_date ? new Date(actor.birth_date).toLocaleDateString() : 'Unknown'}`}
+                >
+                  {actor.name}
+                </div>
+              ))}
+              {tvShow.actors.length > 2 && (
+                <div className="text-xs text-gray-500 italic">
+                  +{tvShow.actors.length - 2} more actor{tvShow.actors.length - 2 !== 1 ? 's' : ''}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
 
         {/* Action Buttons */}

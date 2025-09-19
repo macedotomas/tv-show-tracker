@@ -114,6 +114,24 @@ export const useTvShowStore = create((set, get) => ({
     return types.sort();
   },
 
+  // get all unique actors across all shows
+  getUniqueActors: () => {
+    const { tvShows } = get();
+    const actors = [];
+    
+    tvShows.forEach(show => {
+      if (show.actors && Array.isArray(show.actors)) {
+        show.actors.forEach(actor => {
+          if (actor && actor.name && !actors.find(a => a.actor_id === actor.actor_id)) {
+            actors.push(actor);
+          }
+        });
+      }
+    });
+    
+    return actors.sort((a, b) => a.name.localeCompare(b.name));
+  },
+
   resetFormData: () => set({
     formData: {
       title: "",

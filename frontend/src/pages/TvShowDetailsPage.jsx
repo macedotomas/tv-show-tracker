@@ -4,6 +4,7 @@ import axios from "axios";
 import { useTvShowStore } from "../stores/useTvShowStore.jsx";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon, Package2Icon, FileTextIcon, TagIcon, MonitorIcon, CalendarIcon, StarIcon, SaveIcon, Trash2Icon, ChevronDownIcon } from "lucide-react";
+import ActorsList from "../components/ActorsList.jsx";
 
 const BASE_URL = "http://localhost:3000";
 
@@ -85,13 +86,13 @@ const TvShowDetails = ({ setAuth }) => {
 
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl" >
+    <div className="container mx-auto px-4 py-8 max-w-7xl" >
       <button onClick={() => navigate("/")} className="btn btn-ghost mb-8">
         <ArrowLeftIcon className="size-4 mr-2" />
         Back to Dashboard
       </button>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="card bg-base-100 shadow-lg">
           <div className="card-body">
             <h2 className="card-title text-2xl mb-6">Edit TvShow</h2>
@@ -285,6 +286,13 @@ const TvShowDetails = ({ setAuth }) => {
               
             </form>
 
+          </div>
+        </div>
+
+        {/* Actors Section */}
+        <div className="card bg-base-100 shadow-lg">
+          <div className="card-body">
+            <ActorsList actors={currentTvShow?.actors} showDetailed={true} />
           </div>
         </div>
 
