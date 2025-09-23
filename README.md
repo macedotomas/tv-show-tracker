@@ -11,6 +11,11 @@
    * Export information to csv/pdf (didn't fully understand what information to export users, tv-shows, etc)
    
    * Unit & Integration Tests (I took a bad approach by doing this in the end, because I was overwhelmed by the numbers of bugs I was getting by trying to do tests with full app working. Next time I should do tests at the same time I develop the app)
+
+## User details to test
+email: admin@admin.com
+password: 123
+
  
 
 
